@@ -1,0 +1,24 @@
+html {
+	height:100%;
+}
+
+body {
+	height:100%;
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+
+.navbar {
+	margin-bottom: 20px;
+}
+
+.maps-frame {
+	width: 100%;
+}
+
+#map {
+	position: relative;
+	overflow:visible;
+	height: 100%;
+	width: 100%;
+}
