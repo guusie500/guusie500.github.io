@@ -5,11 +5,11 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-		<meta name="description" content="">
-		<meta name="author" content="">
+		<meta name="description" content="Want a clear map of bus lines around Eindhoven">
+		<meta name="author" content="Guus Westendorp">
 		<link rel="icon" href="../../favicon.ico">
 
-		<title>Navbar Template for Bootstrap</title>
+		<title>Visual Buslines</title>
 
 		<!-- Bootstrap core CSS -->
 		<link href="dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
@@ -43,7 +43,7 @@
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
 						</button>
-						<a class="navbar-brand" href="#">Project name</a>
+						<a class="navbar-brand" href="#">Visual Buslines</a>
 					</div>
 					<div id="navbar" class="navbar-collapse collapse">
 						<ul class="nav navbar-nav">
@@ -71,10 +71,25 @@
 					</div><!--/.nav-collapse -->
 				</div><!--/.container-fluid -->
 			</nav>
-			<div id="mapholder" class="container" style="height:100%;width:100%;">
-				<div id="map" style="overflow:visible;"></div>
-				<div id="buslist" height="50px" width="50px"></div>
+			<div id="maincontent" class="container" style="height:100%;width:100%;">
+				<div id="map"></div>
+				<div id="buslist">
+					<h1>Bus Lines</h1>
+					<select id="lineoption">
+						<option value="305">305</option>
+						<option value="305">306</option>
+					</select>
+					<button id="addline">Add Line</button>
+					<div id="itemlist">
+						
+					</div>
+				</div>
 			</div>
+			<footer class="footer">
+				<div class="container" id="footer">
+					<p class="text-muted">Made By: Guus Westendorp</p>
+				</div>
+			</footer>
 		</div> <!-- /container -->
 
 		<!-- jQuery import -->
@@ -98,16 +113,54 @@
 		<script>
 			var map;
 			var dir;
+			var lines = [];
 			
-			function resizeMap(){
-				var height = $(window).height() - 3*$('nav').height();
-				$('#mapholder').css('height',height);
+			$('#addline').click(function(){
+				var i = 0;
+				var abort = false;
+				var value = $('#lineoption option:selected').text();
+				while(i<lines.length){
+					if(lines[i] === value){
+						abort = true;
+					}
+					i++;
+				}
+				if(!abort){
+					$('#itemlist').append('<div id="item'+value+'">'+value+'<button onclick="removeitem('+value+');">remove</button></div>');
+					lines.push(value);
+				}
+				console.log(lines);
+			});
+			
+			function removeitem(item){
+				console.log("removing item: " + item);
+				var i = 0;
+				while(i<lines.length){
+					if(lines[i] == item){
+						lines.splice(lines.indexOf(item),1);
+					}else{
+						i++;
+					}
+				}
+				console.log(lines);
+				var name = '#item' + item;
+				$(name).remove();
+			}
+			
+			function resizemaincontent(){
+				var borderheights = 0.0;
+				borderheights += parseInt($('nav').css('border-top-width').replace('px','')); //nav top border
+				borderheights += parseInt($('nav').css('border-bottom-width').replace('px','')); //nav bottom border
+				var height = $(window).height() - $('nav').height() - $('footer').height() -  borderheights;
+				$('#maincontent').css('height',height);
+				var width = parseInt($('#maincontent').css('width').replace('px',''));
+				$('#footer').css('width',width);
 			}
 			
 			function initMap() {
-				resizeMap();
+				resizemaincontent();
 				$(window).resize(function(){
-					resizeMap();
+					resizemaincontent();
 				});
 				// Create a map object and specify the DOM element for display.
 				map = new google.maps.Map(document.getElementById('map'), {
