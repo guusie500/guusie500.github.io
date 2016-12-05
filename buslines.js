@@ -1,28 +1,48 @@
+var buslines;
+var busnames;
+var bus305;
+var bus306;
+
 function createLines(system){
 	//busline 305
-	var bus305 = {
-		origin: 'Oss',
-		destination: 'Eindhoven',
-		waypoints: [
+	bus305 = {
+		//origin: 'Oss Station',
+		//destination: 'Eindhoven Centraal Station',
+		origin:'51.7651657,5.5303004',
+		destination:'51.44373334,5.47867879',
+		/*waypoints: [
 		{
-			location: 'Veghel',
+			location: 'Heesch+Stationsplein',
 			stopover: false
 		},{
-			location: 'Uden',
-			stopover: true
-		}],
+			location: 'Nistelrode+Noorderbaan',
+			stopover: false
+		},{
+			location: 'Uden+Ziekenhuis',
+			stopover: false
+		},{
+			location: 'Uden+Busstation',
+			stopover: false
+		},{
+			location: 'Veghel+Hintelstraat',
+			stopover: false
+		},{
+			location: 'Veghel+Busstation',
+			stopover: false
+		},{
+			location: 'Veghel+Oprit+N265',
+			stopover: false
+		},{
+			location: 'Veghel+Corridor',
+			stopover: false
+		}],*/
 			provideRouteAlternatives: false,
 			travelMode: 'DRIVING',
-			/*
-			drivingOptions: {
-			//departureTime: new Date(),
-			trafficModel: 'pessimistic'
-			}, */
 			unitSystem: google.maps.UnitSystem.METRIC
 	};
 	
 	//busline 306
-	var bus306 = {
+	bus306 = {
 		origin: 'Den Bosch',
 		destination: 'OSS',
 		waypoints: [
@@ -43,8 +63,11 @@ function createLines(system){
 		unitSystem: google.maps.UnitSystem.METRIC
 	};
 	
-	var lines = [bus305,bus306];
-	if(lines.length > 0){
-		showLine(lines);
+	buslines = [bus305,bus306];
+	busnames = ['305 Oss - Eindhoven','306 Oss - Den Bosch'];
+	/*
+	if(buslines.length > 0){
+		showLine(buslines);
 	}
+	*/
 }

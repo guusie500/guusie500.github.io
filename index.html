@@ -47,9 +47,11 @@
 					</div>
 					<div id="navbar" class="navbar-collapse collapse">
 						<ul class="nav navbar-nav">
-							<li class="active"><a href="#">Home</a></li>
-							<li><a href="#">About</a></li>
-							<li><a href="#">Contact</a></li>
+							<li><a href="index.html">Home</a></li>
+							<li class="active"><a href="map.html">Map</a></li>
+							<li><a href="about.html">About</a></li>
+							<li><a href="contact.html">Contact</a></li>
+							<!--
 							<li class="dropdown">
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
 								<ul class="dropdown-menu">
@@ -62,12 +64,15 @@
 									<li><a href="#">One more separated link</a></li>
 								</ul>
 							</li>
+							-->
 						</ul>
+						<!--
 						<ul class="nav navbar-nav navbar-right">
 							<li class="active"><a href="./">Default <span class="sr-only">(current)</span></a></li>
 							<li><a href="../navbar-static-top/">Static top</a></li>
 							<li><a href="../navbar-fixed-top/">Fixed top</a></li>
 						</ul>
+						-->
 					</div><!--/.nav-collapse -->
 				</div><!--/.container-fluid -->
 			</nav>
@@ -76,8 +81,7 @@
 				<div id="buslist">
 					<h1>Bus Lines</h1>
 					<select id="lineoption">
-						<option value="305">305</option>
-						<option value="305">306</option>
+						<option value="empty"></option>
 					</select>
 					<button id="addline">Add Line</button>
 					<div id="itemlist">
@@ -114,38 +118,59 @@
 			var map;
 			var dir;
 			var lines = [];
+			var routes = [];
 			
 			$('#addline').click(function(){
 				var i = 0;
 				var abort = false;
-				var value = $('#lineoption option:selected').text();
-				while(i<lines.length){
-					if(lines[i] === value){
-						abort = true;
+				var value = $('#lineoption option:selected').val();
+				if(value === "empty"){
+					console.log("no item added");
+				}else{
+					while(i<lines.length){
+						if(lines[i] === value){
+							abort = true;
+						}
+						i++;
 					}
-					i++;
+					if(!abort){
+						$('#itemlist').append('<div onclick="clickitem(item'+value+');" class="item" id="item'+value+'">'+value+'<button class="removebutton" onclick="removeitem('+value+');">remove</button>');
+						$('#itemlist').append();
+						$('#itemlist').append('</div>');
+						lines.push(value);
+					}
 				}
-				if(!abort){
-					$('#itemlist').append('<div id="item'+value+'">'+value+'<button onclick="removeitem('+value+');">remove</button></div>');
-					lines.push(value);
-				}
-				console.log(lines);
+				console.log("List of line numbers: " + lines);
+				showCorrectLines();
 			});
 			
 			function removeitem(item){
 				console.log("removing item: " + item);
 				var i = 0;
 				while(i<lines.length){
+					console.log("removing: " + lines[i] + " : " + item + " : " + lines.indexOf(item));
 					if(lines[i] == item){
-						lines.splice(lines.indexOf(item),1);
+						lines.splice(i,1);
 					}else{
 						i++;
 					}
 				}
-				console.log(lines);
+				console.log("List of line numbers: " + lines);
 				var name = '#item' + item;
 				$(name).remove();
+				for(i = 0; i < routes.length; i++){
+					routes[i].setMap(null);
+				}
+				routes = new Array();
+				showCorrectLines();
 			}
+			
+			function clickitem(item){
+				console.log("clicked");
+				$(this).slideToggle("slow", function(){
+					
+				});
+			};
 			
 			function resizemaincontent(){
 				var borderheights = 0.0;
@@ -170,29 +195,65 @@
 					styles: options
 				});
 				dir = new google.maps.DirectionsService();
+				
 				createLines(google.maps.UnitSystem.METRIC);
+				addLinesToSelect();
 				
 				google.maps.event.trigger(map, "resize");
 			}
 			
 			function display(line){
 				directionsDisplay = new google.maps.DirectionsRenderer();
+				routes.push(directionsDisplay);
 				directionsDisplay.setMap(map);
 				directionsDisplay.setDirections(line);
 				google.maps.event.trigger(map, "resize");
 			}
 			
-			function showLine(lines){
-				console.log("Creating bus line from " + lines[0].origin + " to " + lines[0].destination);
-				dir.route(lines[0],function(response,status){
+			function showCorrectLines(){
+				var correctLines = [];
+				for(i = 0; i < busnames.length; i++){
+					for(j = 0; j < lines.length; j++){
+						console.log("Checking for: " + busnames[i].substring(0,3) + " and " + lines[j]);
+						if(busnames[i].substring(0,3) == lines[j]){
+							correctLines.push(buslines[i]);
+						}
+					}
+				}
+				console.log("Amount of lines that should be displayed: " + correctLines);
+				if(correctLines.length > 0){
+					showLine(correctLines);
+				}else{
+					for(i = 0; i < routes.length; i++){
+						routes[i].setMap(null);
+					}
+					routes = new Array();
+					google.maps.event.trigger(map, "resize");
+				}
+			}
+			
+			function showLine(linelist){
+				console.log("Creating bus line from " + linelist[0].origin + " to " + linelist[0].destination);
+				dir.route(linelist[0],function(response,status){
 					if (status == 'OK') {
 						display(response);
-						lines.splice(0, 1);
-						if (lines.length > 0){
-							showLine(lines);
+						linelist.splice(0, 1);
+						if (linelist.length > 0){
+							showLine(linelist);
 						}
 					}
 				});
+			}
+			
+			function addLinesToSelect(){
+				for(i = 0; i < buslines.length; i++){
+					var line = buslines[i];
+					var waypoints = line.waypoints;
+					var begin = line.origin;
+					var end = line.destination;
+					var number = busnames[i].substring(0,3);
+					$('#lineoption').append('<option value="'+number+'">'+number+' '+begin+' - '+end+'</option>');
+				}
 			}
 
 		</script>
