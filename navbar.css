@@ -4,16 +4,22 @@ html {
 
 body {
 	height:100%;
-	padding-top: 20px;
-	padding-bottom: 20px;
+	padding-top: 0px;
+	padding-bottom: 0px;
 }
 
 .navbar {
-	margin-bottom: 20px;
+	margin-bottom: 0px;
+	border-top-left-radius:0px;
+	border-top-right-radius:0px;
 }
 
 .maps-frame {
 	width: 100%;
+}
+
+#mapholder{
+	padding:0px;
 }
 
 #map {
