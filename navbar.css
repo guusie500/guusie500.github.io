@@ -21,8 +21,10 @@ body {
 
 #footer {
 	background-color: #f8f8f8;
-	padding:0px;
+	margin-top:5px;
 	text-align:left;
+	font-size:14px;
+	vertical-align:center;
 }
 
 #maincontent{
@@ -50,9 +52,11 @@ body {
 }
 
 .item {
+	position:relative;
 	width:100%;
 	border:3px solid #c9c9c9;
 	border-radius:5px;
+	padding:5px;
 }
 
 .item:hover{
@@ -61,5 +65,66 @@ body {
 
 .removebutton{
 	position:absolute;
-	right:0px;
+	right:5px;
+	top:5px;
+}
+
+.item > li{
+	text-indent:20px;
+}
+
+#textbox{
+	height:100%;
+	width:100%;
+	background-color: #f8f8f8;
+	border-top:1px solid #c9c9c9;
+	border-bottom:1px solid #c9c9c9;
+	text-align:center;
+	vertical-align:middle;
+	overflow-y:scroll;
+}
+
+#textbox > h1{
+	position:relative;
+	top:20%;
+	font-size:48px;
+}
+
+#textbox > p{
+	position:relative;
+	font-size:36px;
+	top:25%;
+}
+
+.animate
+{
+	transition: all 0.1s;
+	-webkit-transition: all 0.1s;
+}
+
+.action-button
+{
+	position: relative;
+	padding: 10px 40px;
+	top:30%;
+	float: center;
+	border-radius: 10px;
+	font-family: 'Pacifico', cursive;
+	font-size: 25px;
+	color: #FFF;
+	text-decoration: none;	
+}
+
+.blue
+{
+	background-color: #3498DB;
+	border-bottom: 5px solid #2980B9;
+	text-shadow: 0px -2px #2980B9;
+}
+
+.action-button:active
+{
+	transform: translate(0px,5px);
+	-webkit-transform: translate(0px,5px);
+	border-bottom: 1px solid;
 }

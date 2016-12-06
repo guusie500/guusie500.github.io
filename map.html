@@ -58,8 +58,8 @@
 					</div>
 					<div id="navbar" class="navbar-collapse collapse">
 						<ul class="nav navbar-nav">
-							<li class="active"><a href="index.html">Home</a></li>
-							<li><a href="map.html">Map</a></li>
+							<li><a href="index.html">Home</a></li>
+							<li class="active"><a href="map.html">Map</a></li>
 							<li><a href="about.html">About</a></li>
 							<li><a href="contact.html">Contact</a></li>
 							<!--
@@ -88,10 +88,16 @@
 				</div><!--/.container-fluid -->
 			</nav>
 			<div id="maincontent" class="container" style="height:100%;width:100%;">
-				<div id="textbox">
-					<h1 id="title">Welcome to Visual Buslines</h1>
-					<p id="contenttext">Did you ever look at your OV app and think: Can they not show me a map of the buslines? It would make it a lot easier to find the nearest bus stop that has a bus to your preferred destination. We got this covered for you.</p>
-					<button onmouseup="$(this).hide();$('#title').hide();$('#contenttext').hide();location.href='map.html';" class="action-button shadow animate blue">Show Me</button>
+				<div id="map"></div>
+				<div id="buslist">
+					<h1>Bus Lines</h1>
+					<select id="lineoption">
+						<option value="empty"></option>
+					</select>
+					<button id="addline">Add Line</button>
+					<div id="itemlist">
+						
+					</div>
 				</div>
 			</div>
 			<footer class="footer">
@@ -118,13 +124,78 @@
 		<script src="buslines.js"></script>
 		<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBXyiw3gwfcn8dz9lc0bGX2iABk7Z2rhVY&callback=initMap" async defer></script>
 		<script>
+			var map;
+			var dir;
+			var lines = [];
+			var routes = [];
 			
-			$(document).ready(function(){
-				resizemaincontent();
-				$(window).resize(function(){
-					resizemaincontent();
-				});
+			$('#addline').click(function(){
+				var i = 0;
+				var abort = false;
+				var value = $('#lineoption option:selected').val();
+				var content = $('#lineoption option:selected').text();
+				if(value === "empty"){
+					console.log("no item added");
+				}else{
+					while(i<lines.length){
+						if(lines[i] === value){
+							abort = true;
+						}
+						i++;
+					}
+					if(!abort){
+						$('#itemlist').append('<div onclick="clickitem('+value+');" class="item" id="item'+value+'">'+content+'<button class="removebutton" onclick="removeitem('+value+');">remove</button><ul>');
+						var divname = '#item'+value;
+						for(k = 0; k < busnames.length; k++){
+							if(busnames[k].substring(0,3) == value){
+								$(divname).append('<li class=listitem'+value+'> - '+buslines[k].origin+'</li>');
+								waypoints = buslines[k].waypoints;
+								for(l = 0; l < waypoints.length; l++){
+									$(divname).append('<li class=listitem'+value+'> - '+waypoints[l].location+'</li>');
+								}
+								$(divname).append('<li class=listitem'+value+'> - '+buslines[k].destination+'</li>');
+							}
+						}
+						$(divname).append('</ul>');
+						$('#itemlist').append('</div>');
+						var itemclass = '.listitem'+value;
+						$(itemclass).hide();
+						lines.push(value);
+					}
+				}
+				console.log("List of line numbers: " + lines);
+				showCorrectLines();
 			});
+			
+			function removeitem(item){
+				console.log("removing item: " + item);
+				var i = 0;
+				while(i<lines.length){
+					console.log("removing: " + lines[i] + " : " + item + " : " + lines.indexOf(item));
+					if(lines[i] == item){
+						lines.splice(i,1);
+					}else{
+						i++;
+					}
+				}
+				console.log("List of line numbers: " + lines);
+				var name = '#item' + item;
+				$(name).remove();
+				for(i = 0; i < routes.length; i++){
+					routes[i].setMap(null);
+				}
+				routes = new Array();
+				showCorrectLines();
+			}
+			
+			function clickitem(item){
+				console.log("clicked: " + item);
+				var div = '#item' + item;
+				var listitems = '.listitem' + item;
+				$(listitems).slideToggle("fast", function(){
+					//$(listitems).show();
+				});
+			};
 			
 			function resizemaincontent(){
 				var borderheights = 0.0;
@@ -135,6 +206,93 @@
 				$('#maincontent').css('height',height);
 				var width = parseInt($('#maincontent').css('width').replace('px',''));
 				$('#footer').css('width',width);
+				if($(document).width() < 1000){
+					$('#map').css('height',height/2);
+					$('#map').css('width','100%');
+					$('#buslist').css('height',height/2);
+					$('#buslist').css('width','100%');
+					var width = parseInt($('#maincontent').css('width').replace('px',''));
+					$('#footer').css('width',width);
+				}else{
+					$('#map').css('height',height);
+					$('#map').css('width','70%');
+					$('#buslist').css('height',height);
+					$('#buslist').css('width','30%');
+				}
+			}
+			
+			function initMap() {
+				resizemaincontent();
+				$(window).resize(function(){
+					resizemaincontent();
+				});
+				// Create a map object and specify the DOM element for display.
+				map = new google.maps.Map(document.getElementById('map'), {
+					center: {lat: 51.4867272, lng: 5},
+					scrollwheel: true,
+					zoom: 9,
+					styles: options
+				});
+				dir = new google.maps.DirectionsService();
+				
+				createLines(google.maps.UnitSystem.METRIC);
+				addLinesToSelect();
+				
+				google.maps.event.trigger(map, "resize");
+			}
+			
+			function display(line){
+				directionsDisplay = new google.maps.DirectionsRenderer();
+				routes.push(directionsDisplay);
+				directionsDisplay.setMap(map);
+				directionsDisplay.setDirections(line);
+				google.maps.event.trigger(map, "resize");
+			}
+			
+			function showCorrectLines(){
+				var correctLines = [];
+				for(i = 0; i < busnames.length; i++){
+					for(j = 0; j < lines.length; j++){
+						console.log("Checking for: " + busnames[i].substring(0,3) + " and " + lines[j]);
+						if(busnames[i].substring(0,3) == lines[j]){
+							correctLines.push(buslines[i]);
+						}
+					}
+				}
+				console.log("Amount of lines that should be displayed: " + correctLines);
+				if(correctLines.length > 0){
+					showLine(correctLines);
+				}else{
+					for(i = 0; i < routes.length; i++){
+						routes[i].setMap(null);
+					}
+					routes = new Array();
+					google.maps.event.trigger(map, "resize");
+				}
+			}
+			
+			function showLine(linelist){
+				console.log("Creating bus line from " + linelist[0].origin + " to " + linelist[0].destination);
+				dir.route(linelist[0],function(response,status){
+					if (status == 'OK') {
+						display(response);
+						linelist.splice(0, 1);
+						if (linelist.length > 0){
+							showLine(linelist);
+						}
+					}
+				});
+			}
+			
+			function addLinesToSelect(){
+				for(i = 0; i < buslines.length; i++){
+					var line = buslines[i];
+					var waypoints = line.waypoints;
+					var begin = line.origin;
+					var end = line.destination;
+					var number = busnames[i].substring(0,3);
+					$('#lineoption').append('<option value="'+number+'">'+number+' '+begin+' - '+end+'</option>');
+				}
 			}
 
 		</script>
