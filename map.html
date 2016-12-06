@@ -137,13 +137,18 @@
 				if(value === "empty"){
 					console.log("no item added");
 				}else{
-					while(i<lines.length){
-						if(lines[i] === value){
+					console.log(i + " is i and lines has length: " + lines.length);
+					while(i < lines.length){
+						if(lines[i] == value){
+							console.log("aborting");
 							abort = true;
+						}else{
+							console.log(lines[i]+" is not " + value);
 						}
 						i++;
 					}
 					if(!abort){
+						console.log("adding item");
 						$('#itemlist').append('<div onclick="clickitem('+value+');" class="item" id="item'+value+'">'+content+'<button class="removebutton" onclick="removeitem('+value+');">remove</button><ul>');
 						var divname = '#item'+value;
 						for(k = 0; k < busnames.length; k++){
@@ -250,6 +255,11 @@
 			}
 			
 			function showCorrectLines(){
+				for(i = 0; i < routes.length; i++){
+						routes[i].setMap(null);
+					}
+					routes = new Array();
+					google.maps.event.trigger(map, "resize");
 				var correctLines = [];
 				for(i = 0; i < busnames.length; i++){
 					for(j = 0; j < lines.length; j++){
