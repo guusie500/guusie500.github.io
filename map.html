@@ -87,13 +87,13 @@
 			</nav>
 			<div id="maincontent" class="container" style="height:100%;width:100%;">
 				<div id="map"></div>
-				<div id="buslist">
-					<h1>Bus Lines</h1>
-					<select id="lineoption">
-						<option value="empty"></option>
+				<div style="position:relative;" id="buslist">
+					<h1 style="text-indent:10px;">Bus Lines</h1>
+					<select style="position:absolute;left:10px;" id="lineoption">
+						<option value="empty"> choose a bus line </option>
 					</select>
-					<button id="addline">Add Line</button>
-					<div id="itemlist">
+					<button style="position:absolute;left:10px;top:100px;" id="addline">Add Line</button>
+					<div style="position:absolute;top:140px;width:100%;" id="itemlist">
 						
 					</div>
 				</div>
@@ -147,7 +147,7 @@
 					}
 					if(!abort){
 						console.log("adding item");
-						$('#itemlist').append('<div onclick="clickitem('+value+');" class="item" id="item'+value+'">'+content+'<button class="removebutton" onclick="removeitem('+value+');">remove</button><ul>');
+						$('#itemlist').append('<div onclick="clickitem(\''+value+'\');" class="item" id="item'+value+'">'+content+'<button class="removebutton" onclick="removeitem(\''+value+'\');">remove</button><ul>');
 						var divname = '#item'+value;
 						for(k = 0; k < busnames.length; k++){
 							if(busnames[k].substring(0,3) == value){
@@ -299,6 +299,7 @@
 					var begin = line.origin;
 					var end = line.destination;
 					var number = busnames[i].substring(0,3);
+					console.log("linenumber: " + number);
 					$('#lineoption').append('<option value="'+number+'">'+number+' '+begin+' - '+end+'</option>');
 				}
 			}

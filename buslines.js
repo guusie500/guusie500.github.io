@@ -1,41 +1,128 @@
 var buslines;
 var busnames;
-var bus305;
-var bus306;
+var bus020, bus022, bus024,bus121, bus305, bus306;
 
 function createLines(system){
+	//busline 20
+	bus020 = {
+		origin: 'Helmond',
+		destination: 'Eindhoven',
+		//origin:'51.7651657,5.5303004',
+		//destination:'51.44373334,5.47867879',
+		waypoints: [
+		{
+			location: 'Asten',
+			stopover: false
+		},{
+			location: 'Someren',
+			stopover: false
+		},{
+			location: 'Lierop',
+			stopover: false
+		},{
+			location: 'Mierlo',
+			stopover: false
+		},{
+			location: 'Geldrop',
+			stopover: false
+		}],
+			provideRouteAlternatives: false,
+			travelMode: 'DRIVING',
+			unitSystem: google.maps.UnitSystem.METRIC
+	};
+	
+	//busline 22
+	bus022 = {
+		origin: 'Helmond',
+		destination: 'Eindhoven',
+		//origin:'51.7651657,5.5303004',
+		//destination:'51.44373334,5.47867879',
+		waypoints: [
+		{
+			location: 'Stiphout',
+			stopover: false
+		},{
+			location: 'Gerwen',
+			stopover: false
+		},{
+			location: 'Nuenen',
+			stopover: false
+		}],
+			provideRouteAlternatives: false,
+			travelMode: 'DRIVING',
+			unitSystem: google.maps.UnitSystem.METRIC
+	};
+	
+	//busline 22
+	bus024 = {
+		origin: 'Helmond',
+		destination: 'Eindhoven',
+		//origin:'51.7651657,5.5303004',
+		//destination:'51.44373334,5.47867879',
+		waypoints: [
+		{
+			location: 'Mierlo',
+			stopover: false
+		},{
+			location: 'Geldrop',
+			stopover: false
+		}],
+			provideRouteAlternatives: false,
+			travelMode: 'DRIVING',
+			unitSystem: google.maps.UnitSystem.METRIC
+	};
+	
+	//busline 22
+	bus121 = {
+		origin: 'Uden',
+		destination: 'Eindhoven',
+		//origin:'51.7651657,5.5303004',
+		//destination:'51.44373334,5.47867879',
+		waypoints: [
+		{
+			location: 'Volkel',
+			stopover: false
+		},{
+			location: 'Boekel',
+			stopover: false
+		},{
+			location: 'Gemert',
+			stopover: false
+		},{
+			location: 'Lieshout',
+			stopover: false
+		},{
+			location: 'Nuenen',
+			stopover: false
+		}],
+			provideRouteAlternatives: false,
+			travelMode: 'DRIVING',
+			unitSystem: google.maps.UnitSystem.METRIC
+	};
+	
 	//busline 305
 	bus305 = {
 		origin: 'Oss',
 		destination: 'Eindhoven',
 		//origin:'51.7651657,5.5303004',
 		//destination:'51.44373334,5.47867879',
-		/*waypoints: [
+		waypoints: [
 		{
-			location: 'Heesch+Stationsplein',
+			location: 'Heesch',
 			stopover: false
 		},{
-			location: 'Nistelrode+Noorderbaan',
+			location: 'Nistelrode',
 			stopover: false
 		},{
-			location: 'Uden+Ziekenhuis',
+			location: 'Uden',
 			stopover: false
 		},{
-			location: 'Uden+Busstation',
+			location: 'Uden',
 			stopover: false
 		},{
-			location: 'Veghel+Hintelstraat',
+			location: 'Veghel',
 			stopover: false
-		},{
-			location: 'Veghel+Busstation',
-			stopover: false
-		},{
-			location: 'Veghel+Oprit+N265',
-			stopover: false
-		},{
-			location: 'Veghel+Corridor',
-			stopover: false
-		}],*/
+		}],
 			provideRouteAlternatives: false,
 			travelMode: 'DRIVING',
 			unitSystem: google.maps.UnitSystem.METRIC
@@ -48,10 +135,10 @@ function createLines(system){
 		waypoints: [
 		{
 			location: 'Schijndel',
-			stopover: true
+			stopover: false
 		},{
 			location: 'Veghel',
-			stopover: true
+			stopover: false
 		}],
 		provideRouteAlternatives: false,
 		travelMode: 'DRIVING',
@@ -63,8 +150,8 @@ function createLines(system){
 		unitSystem: google.maps.UnitSystem.METRIC
 	};
 	
-	buslines = [bus305,bus306];
-	busnames = ['305 Oss - Eindhoven','306 Oss - Den Bosch'];
+	buslines = [bus020,bus022,bus024,bus121,bus305,bus306];
+	busnames = ['020 Helmond - Eindhoven','022 Helmond - Eindhoven','024 Helmond - Eindhoven','121 Uden - Eindhoven','305 Oss - Eindhoven','306 Oss - Den Bosch'];
 	/*
 	if(buslines.length > 0){
 		showLine(buslines);
