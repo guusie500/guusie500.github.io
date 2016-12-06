@@ -6,10 +6,10 @@ var bus306;
 function createLines(system){
 	//busline 305
 	bus305 = {
-		//origin: 'Oss Station',
-		//destination: 'Eindhoven Centraal Station',
-		origin:'51.7651657,5.5303004',
-		destination:'51.44373334,5.47867879',
+		origin: 'Oss',
+		destination: 'Eindhoven',
+		//origin:'51.7651657,5.5303004',
+		//destination:'51.44373334,5.47867879',
 		/*waypoints: [
 		{
 			location: 'Heesch+Stationsplein',
