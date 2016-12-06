@@ -46,13 +46,13 @@ body {
 	border-top:1px solid #c9c9c9;
 	border-bottom:1px solid #c9c9c9;
 	overflow-y:scroll;
+	overflow-x:hidden;
 }
 
 .item {
 	width:100%;
 	border:3px solid #c9c9c9;
 	border-radius:5px;
-	height:36px;
 }
 
 .item:hover{

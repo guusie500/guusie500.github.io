@@ -43,7 +43,7 @@
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
 						</button>
-						<a class="navbar-brand" href="#">Visual Buslines</a>
+						<a class="navbar-brand" href="index.html">Visual Buslines</a>
 					</div>
 					<div id="navbar" class="navbar-collapse collapse">
 						<ul class="nav navbar-nav">
@@ -124,6 +124,7 @@
 				var i = 0;
 				var abort = false;
 				var value = $('#lineoption option:selected').val();
+				var content = $('#lineoption option:selected').text();
 				if(value === "empty"){
 					console.log("no item added");
 				}else{
@@ -134,9 +135,20 @@
 						i++;
 					}
 					if(!abort){
-						$('#itemlist').append('<div onclick="clickitem(item'+value+');" class="item" id="item'+value+'">'+value+'<button class="removebutton" onclick="removeitem('+value+');">remove</button>');
-						$('#itemlist').append();
+						$('#itemlist').append('<div onclick="clickitem('+value+');" class="item" id="item'+value+'">'+content+'<button class="removebutton" onclick="removeitem('+value+');">remove</button><ul>');
+						var divname = '#item'+value;
+						for(k = 0; k < busnames.length; k++){
+							if(busnames[k].substring(0,3) == value){
+								waypoints = buslines[k].waypoints;
+								for(l = 0; l < waypoints.length; l++){
+									$(divname).append('<li class=listitem'+value+'>'+waypoints[l].location+'</li>');
+								}
+							}
+						}
+						$(divname).append('</ul>');
 						$('#itemlist').append('</div>');
+						var itemclass = '.listitem'+value;
+						$(itemclass).hide();
 						lines.push(value);
 					}
 				}
@@ -166,9 +178,11 @@
 			}
 			
 			function clickitem(item){
-				console.log("clicked");
-				$(this).slideToggle("slow", function(){
-					
+				console.log("clicked: " + item);
+				var div = '#item' + item;
+				var listitems = '.listitem' + item;
+				$(listitems).slideToggle("slow", function(){
+					//$(listitems).show();
 				});
 			};
 			
@@ -177,9 +191,23 @@
 				borderheights += parseInt($('nav').css('border-top-width').replace('px','')); //nav top border
 				borderheights += parseInt($('nav').css('border-bottom-width').replace('px','')); //nav bottom border
 				var height = $(window).height() - $('nav').height() - $('footer').height() -  borderheights;
+				console.log($(document).width());
 				$('#maincontent').css('height',height);
 				var width = parseInt($('#maincontent').css('width').replace('px',''));
 				$('#footer').css('width',width);
+				if($(document).width() < 1000){
+					$('#map').css('height',height/2);
+					$('#map').css('width','100%');
+					$('#buslist').css('height',height/2);
+					$('#buslist').css('width','100%');
+					var width = parseInt($('#maincontent').css('width').replace('px',''));
+					$('#footer').css('width',width);
+				}else{
+					$('#map').css('height',height);
+					$('#map').css('width','70%');
+					$('#buslist').css('height',height);
+					$('#buslist').css('width','30%');
+				}
 			}
 			
 			function initMap() {
